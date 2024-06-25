@@ -1,12 +1,38 @@
 
 abstract type MyMail end
+# The interface that all `MM<:MyMail` should have "subject" and "message".
 
-@kwdef struct PureTextMail <: MyMail
+
+"""
+`PureTextMail(subject, message)`
+
+# Example
+
+```jldoctest
+using SMTPClient, OkEMailSender
+subject = "Julia logo"
+message = "Check out this cool logo!"
+attachments = ["julia_logo_color.png"]
+
+PureTextMail(subject, message).message == SMTPClient.get_mime_msg(message)
+
+# output
+true
+```
+"""
+struct PureTextMail <: MyMail
     subject
     message
+    function PureTextMail(subject, message)
+        new(subject, get_mine_msg(message))
+    end
 end
 
 """
+`HTMLMail(subject, htmltext)`
+
+# Example
+
 ```jldoctest
 using SMTPClient, OkEMailSender
 
