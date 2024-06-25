@@ -208,22 +208,20 @@ end
 
 
 
+"""
+`SMTPClient.send(MM::MyMail, recipients::Vector{<:AbstractString}, secrets, config::Configuration; test=true, kwargs...)` send `MyMail` to `recipients` with `OkEMailSender.Secrets` and `OkEMailSender.Configuration`.
 
-struct Secrets
-    sender
-    sender_key
-end
+It supports `kwargs` for `SMTPClient.get_body`.
 
-function Secrets(d::Dict; sender="sender", sender_key="sender_key")
-    Secrets(
-        d[sender],
-        d[sender_key]
-    )
-end
 
-Secrets(s::Secrets) = s
+# Example
 
-function SMTPClient.send(MM::MyMail, recipients::Vector{<:AbstractString}, secrets, config::Configuration; test=false, kwargs...)
+```
+
+```
+
+"""
+function SMTPClient.send(MM::MyMail, recipients::Vector{<:AbstractString}, secrets, config::Configuration; test=true, kwargs...)
     sec = Secrets(secrets)
 
     opt = SendOptions(

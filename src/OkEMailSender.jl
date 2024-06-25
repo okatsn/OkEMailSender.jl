@@ -1,4 +1,7 @@
 module OkEMailSender
+include("secrets.jl")
+export Secrets
+
 
 using SMTPClient, HypertextLiteral
 
