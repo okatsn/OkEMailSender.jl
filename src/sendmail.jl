@@ -263,3 +263,6 @@ function OkEMailSender.send(MM::MyMail, recipients::Vector{<:AbstractString}, se
     # previous kwargs will be override, see https://docs.julialang.org/en/v1/manual/functions/#Keyword-Arguments
     resp = send(url, rcpt, from, body, opt)
 end
+
+
+OkEMailSender.send(MM::MyMail, recipients::Vector{<:AbstractString}, secrets; kwargs...) = OkEMailSender.send(MM, recipients, secrets, DefaultConfiguration(); kwargs...)
