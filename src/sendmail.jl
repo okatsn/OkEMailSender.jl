@@ -23,6 +23,8 @@ using DataFrames
 
 df = DataFrame(:Name => ["John", "Doh"], :Income => [100, 200])
 
+subject = "Hello"
+
 msg0 = @htl(\"\"\"
 <html>
     <head>
@@ -51,7 +53,7 @@ msg0 = @htl(\"\"\"
     <body>
 
         <p>
-            <p><h1> Hello </h1></p>
+            <p><h1> \$subject </h1></p>
 
             <p>This is a table: \$(OkHypertextTools.render_table(df))</p>
 
@@ -67,9 +69,16 @@ msg0 = @htl(\"\"\"
 </html>
 \"\"\")
 
+HTMLMail(subject, msg0).message |> print
+
 # output
 
+Content-Type: text/html;
+Content-Transfer-Encoding: 7bit;
+
+
 <html>
+<body><html>
     <head>
         <style>
         h1 {
@@ -113,6 +122,8 @@ msg0 = @htl(\"\"\"
             </p>
         </p>
     </body>
+</html>
+</body>
 </html>
 
 ```
