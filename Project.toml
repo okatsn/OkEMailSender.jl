@@ -3,6 +3,11 @@ uuid = "add5ede0-49b9-4840-ac63-6ca6386cff5c"
 authors = ["okatsn <okatsn@gmail.com> and contributors"]
 version = "0.0.1"
 
+[deps]
+CommonMark = "a80b9123-70ca-4bc0-993e-6e3bcb318db6"
+OkFiles = "b25a35d4-863d-483c-9fa1-95480bd075d2"
+SMTPClient = "c35d69d1-b747-5018-a192-25bc5e63c83d"
+
 [compat]
 julia = "1.9"
 

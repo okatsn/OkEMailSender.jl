@@ -1,5 +1,5 @@
 module OkEMailSender
 
-# Write your package code here.
+using SMTPClient
 
 end
