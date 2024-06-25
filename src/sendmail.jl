@@ -217,11 +217,22 @@ It supports `kwargs` for `SMTPClient.get_body`.
 # Example
 
 ```
-
+using OkEMailSender
+send(
+    PureTextMail("title", "Hello, how are you?"),
+    ["me@test.com", "foo@test.com"],
+    Dict("sender" => "foobar@gmail.com", "sender_key" => "a5s8 6ae8 a6w4 hy5e"),
+    OkEMailSender.DefaultConfiguration();
+    cc = ["hello@test.com", "world@test.com"],
+    replyto = "you@gmail.com",
+    attachments=["img/publicTransport.png", "img/map.jpg"]
+    )
+)
 ```
 
+Noted that the major difference is that there is no need for brackets (e.g., `["<me@test.com>", "<foo@test.com>"]`) when using `OkEMailSender.send`, comparing to `SMTPClient.send`.
 """
-function SMTPClient.send(MM::MyMail, recipients::Vector{<:AbstractString}, secrets, config::Configuration; test=true, kwargs...)
+function OkEMailSender.send(MM::MyMail, recipients::Vector{<:AbstractString}, secrets, config::Configuration; test=true, kwargs...)
     sec = Secrets(secrets)
 
     opt = SendOptions(
@@ -232,9 +243,15 @@ function SMTPClient.send(MM::MyMail, recipients::Vector{<:AbstractString}, secre
 
     if test
         rcpt = to = ["<$(sec.sender)>"] # send to the sender itself when test.
-        kwargs = []
+        cc = String[]
+        replyto = ""
     else
         rcpt = to = ["<$(strip(recipient))>" for recipient in recipients]
+
+        ccs = get(kwarg, :cc, String[])
+        cc = ["<$(strip(c))>" for c in ccs]
+        replyto0 = get(kwarg, :replyto, "")
+        replyto = ifelse(isempty(replyto0), "", "<$(strip(replyto0))>")
     end
 
     from = "<$(sec.sender)>"
@@ -242,6 +259,7 @@ function SMTPClient.send(MM::MyMail, recipients::Vector{<:AbstractString}, secre
     message = MM.message
     url = config.url
 
-    body = get_body(to, from, subject, message; kwargs...)
+    body = get_body(to, from, subject, message; kwargs..., cc, replyto)
+    # previous kwargs will be override, see https://docs.julialang.org/en/v1/manual/functions/#Keyword-Arguments
     resp = send(url, rcpt, from, body, opt)
 end
