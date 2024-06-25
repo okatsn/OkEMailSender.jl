@@ -241,6 +241,12 @@ function OkEMailSender.send(MM::MyMail, recipients::Vector{<:AbstractString}, se
         passwd=sec.sender_key,
     )
 
+    recipients = strip.(recipients)
+    ccs = get(kwarg, :cc, String[]) .|> strip
+    replyto0 = get(kwarg, :replyto, "") |> strip
+    noreplyto = isempty(replyto0)
+
+
     if test
         rcpt = to = ["<$(sec.sender)>"] # send to the sender itself when test.
         cc = String[]
@@ -248,11 +254,10 @@ function OkEMailSender.send(MM::MyMail, recipients::Vector{<:AbstractString}, se
     else
         rcpt = to = ["<$(strip(recipient))>" for recipient in recipients]
 
-        ccs = get(kwarg, :cc, String[])
-        cc = ["<$(strip(c))>" for c in ccs]
-        replyto0 = get(kwarg, :replyto, "")
-        replyto = ifelse(isempty(replyto0), "", "<$(strip(replyto0))>")
-    end
+    cc = ["<$(c)>" for c in ccs]
+    replyto = ifelse(noreplyto, "", "<$(replyto0)>")
+
+
 
     from = "<$(sec.sender)>"
     subject = MM.subject
