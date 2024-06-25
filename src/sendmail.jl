@@ -6,13 +6,46 @@ abstract type MyMail end
     message
 end
 
-
-@kwdef struct HTMLMail <: MyMail
-    subject
-    message
-end
-
 """
+```jldoctest
+using SMTPClient, OkEMailSender
+
+subject = "A simple HTML test"
+message =
+    html\"\"\"<h2>An important link to look at!</h2>
+    Here's an <a href="https://github.com/aviks/SMTPClient.jl">important link</a>
+    \"\"\"
+
+HTMLMail("whatever", message).message == SMTPClient.get_mime_msg(message)
+
+# output
+
+true
+
+```
+
+or simply
+
+
+```jldoctest
+using SMTPClient, OkEMailSender
+
+subject = "A simple HTML test"
+message = \"\"\"
+    <h2>An important link to look at!</h2>
+    Here's an <a href="https://github.com/aviks/SMTPClient.jl">important link</a>
+    \"\"\"
+
+HTMLMail("whatever", message).message == SMTPClient.get_mime_msg(HTML(message))
+
+# output
+
+true
+
+```
+
+
+
 `HTMLMail(subject, text::HypertextLiteral.Result)`
 
 # Example
@@ -128,12 +161,26 @@ Content-Transfer-Encoding: 7bit;
 
 ```
 """
-function HTMLMail(subject, text::HypertextLiteral.Result)
+struct HTMLMail <: MyMail
+    subject
+    message
+    function HTMLMail(subject, message)
+        message = my_get_mine_msg(message)
+        new(subject, message)
+    end
+end
+
+my_get_mine_msg(str::String) = get_mime_msg(HTML(str))
+my_get_mine_msg(str::HTML) = get_mime_msg(str)
+
+# since `get_mime_msg(str)` returns `String`, infinitely recursive fallback occurs if you use `HTMLMail(..., ::String)` and `HTMLMail(..., ::HTML)` to dispatch.
+function my_get_mine_msg(text::HypertextLiteral.Result)
     io = IOBuffer()
     print(io, text)
-    message = get_mime_msg(HTML(String(take!(io)))) # do this if message is HTML
-    HTMLMail(subject, message)
+    get_mime_msg(HTML(String(take!(io)))) # do this if message is HTML
 end
+
+
 
 
 struct Secrets
