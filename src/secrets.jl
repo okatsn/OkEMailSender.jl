@@ -15,9 +15,9 @@ struct Secrets
 end
 
 
-```
+"""
 `Secrets(d::Dict; sender="sender", sender_key="sender_key")` convert a dictionary to the `Secrets` structure.
-```
+"""
 function Secrets(d::Dict; sender="sender", sender_key="sender_key")
     Secrets(
         d[sender],

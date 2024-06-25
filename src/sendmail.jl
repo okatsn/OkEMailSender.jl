@@ -24,7 +24,7 @@ struct PureTextMail <: MyMail
     subject
     message
     function PureTextMail(subject, message)
-        new(subject, get_mine_msg(message))
+        new(subject, get_mime_msg(message))
     end
 end
 
