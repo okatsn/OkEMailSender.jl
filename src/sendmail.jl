@@ -227,7 +227,6 @@ send(
     replyto = "you@gmail.com",
     attachments=["img/publicTransport.png", "img/map.jpg"]
     )
-)
 ```
 
 Noted that the major difference is that there is no need for brackets (e.g., `["<me@test.com>", "<foo@test.com>"]`) when using `OkEMailSender.send`, comparing to `SMTPClient.send`.
@@ -242,17 +241,22 @@ function OkEMailSender.send(MM::MyMail, recipients::Vector{<:AbstractString}, se
     )
 
     recipients = strip.(recipients)
-    ccs = get(kwarg, :cc, String[]) .|> strip
-    replyto0 = get(kwarg, :replyto, "") |> strip
+    ccs = get(kwargs, :cc, String[]) .|> strip
+    replyto0 = get(kwargs, :replyto, "") |> strip
     noreplyto = isempty(replyto0)
 
 
     if test
-        rcpt = to = ["<$(sec.sender)>"] # send to the sender itself when test.
-        cc = String[]
-        replyto = ""
-    else
-        rcpt = to = ["<$(strip(recipient))>" for recipient in recipients]
+        recipients = recipients .* ".test"
+        ccs = ccs .* ".test"
+
+        if !noreplyto
+            replyto0 * ".test"
+        end
+    end
+
+
+    rcpt = to = ["<$(recipient)>" for recipient in recipients]
 
     cc = ["<$(c)>" for c in ccs]
     replyto = ifelse(noreplyto, "", "<$(replyto0)>")
@@ -269,5 +273,7 @@ function OkEMailSender.send(MM::MyMail, recipients::Vector{<:AbstractString}, se
     resp = send(url, rcpt, from, body, opt)
 end
 
-
-OkEMailSender.send(MM::MyMail, recipients::Vector{<:AbstractString}, secrets; kwargs...) = OkEMailSender.send(MM, recipients, secrets, DefaultConfiguration(); kwargs...)
+"""
+OkEMailSender.send(MM::MyMail, recipients::Vector{<:AbstractString}, secrets; kwargs...) = send(MM, recipients, secrets, DefaultConfiguration(); kwargs...)
+"""
+OkEMailSender.send(MM::MyMail, recipients::Vector{<:AbstractString}, secrets; kwargs...) = send(MM, recipients, secrets, DefaultConfiguration(); kwargs...)
