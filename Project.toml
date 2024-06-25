@@ -1,7 +1,7 @@
 name = "OkEMailSender"
 uuid = "add5ede0-49b9-4840-ac63-6ca6386cff5c"
 authors = ["okatsn <okatsn@gmail.com> and contributors"]
-version = "1.0.0-DEV"
+version = "0.0.1"
 
 [compat]
 julia = "1.9"
