@@ -229,10 +229,26 @@ send(
     )
 ```
 
+# Hints
+
 Noted that the major difference is that there is no need for brackets (e.g., `["<me@test.com>", "<foo@test.com>"]`) when using `OkEMailSender.send`, comparing to `SMTPClient.send`.
 
 Address(es) can be a string of mails separated by `";"`, or a vector of strings;
 for the type of acceptable mail address(es) (e.g., `cc`, `recipients`), please refer `address_cleaner`.
+
+It is useful to load local secrets, for example:
+
+```julia
+using JSON
+secret_path = "local/secrets.json"
+secrets = JSON.parsefile(secret_path)
+
+using OkEMailSender
+send(
+    PureTextMail("title", "Hello, how are you?"),
+    "me@test.com; foo@test.com",
+    secrets)
+```
 """
 function OkEMailSender.send(MM::MyMail, recipients, secrets, config::Configuration; test=true, kwargs...)
     sec = Secrets(secrets)
