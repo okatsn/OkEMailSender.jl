@@ -240,9 +240,9 @@ function OkEMailSender.send(MM::MyMail, recipients::Vector{<:AbstractString}, se
         passwd=sec.sender_key,
     )
 
-    recipients = strip.(recipients)
-    ccs = get(kwargs, :cc, String[]) .|> strip
-    replyto0 = get(kwargs, :replyto, "") |> strip
+    recipients = address_cleaner(recipients)
+    ccs = get(kwargs, :cc, String[]) |> address_cleaner
+    replyto0 = get(kwargs, :replyto, "") |> address_cleaner |> only
     noreplyto = isempty(replyto0)
 
 
@@ -277,3 +277,15 @@ end
 OkEMailSender.send(MM::MyMail, recipients::Vector{<:AbstractString}, secrets; kwargs...) = send(MM, recipients, secrets, DefaultConfiguration(); kwargs...)
 """
 OkEMailSender.send(MM::MyMail, recipients::Vector{<:AbstractString}, secrets; kwargs...) = send(MM, recipients, secrets, DefaultConfiguration(); kwargs...)
+
+
+function address_cleaner(str::AbstractString)
+    addresses = split(str, ";") .|> strip
+    filter!(!isempty, addresses)
+    return addresses
+end
+
+function address_cleaner(strvec::Vector{<:AbstractString})
+    addresses = strvec .|> strip
+    return addresses
+end
