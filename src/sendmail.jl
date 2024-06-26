@@ -249,6 +249,8 @@ send(
     "me@test.com; foo@test.com",
     secrets)
 ```
+
+If the dictionary has different entry names for `sender` and `sender_key`, use the `Secrets` constructor. See the docstring of `Secrets`.
 """
 function OkEMailSender.send(MM::MyMail, recipients, secrets, config::Configuration; test=true, kwargs...)
     sec = Secrets(secrets)
