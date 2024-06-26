@@ -209,7 +209,7 @@ end
 
 
 """
-`SMTPClient.send(MM::MyMail, recipients::Vector{<:AbstractString}, secrets, config::Configuration; test=true, kwargs...)` send `MyMail` to `recipients` with `OkEMailSender.Secrets` and `OkEMailSender.Configuration`.
+`SMTPClient.send(MM::MyMail, recipients, secrets, config::Configuration; test=true, kwargs...)` send `MyMail` to `recipients` with `OkEMailSender.Secrets` and `OkEMailSender.Configuration`.
 
 It supports `kwargs` for `SMTPClient.get_body`.
 
@@ -230,8 +230,11 @@ send(
 ```
 
 Noted that the major difference is that there is no need for brackets (e.g., `["<me@test.com>", "<foo@test.com>"]`) when using `OkEMailSender.send`, comparing to `SMTPClient.send`.
+
+Address(es) can be a string of mails separated by `";"`, or a vector of strings;
+for the type of acceptable mail address(es) (e.g., `cc`, `recipients`), please refer `address_cleaner`.
 """
-function OkEMailSender.send(MM::MyMail, recipients::Vector{<:AbstractString}, secrets, config::Configuration; test=true, kwargs...)
+function OkEMailSender.send(MM::MyMail, recipients, secrets, config::Configuration; test=true, kwargs...)
     sec = Secrets(secrets)
 
     opt = SendOptions(
@@ -274,17 +277,34 @@ function OkEMailSender.send(MM::MyMail, recipients::Vector{<:AbstractString}, se
 end
 
 """
-OkEMailSender.send(MM::MyMail, recipients::Vector{<:AbstractString}, secrets; kwargs...) = send(MM, recipients, secrets, DefaultConfiguration(); kwargs...)
+OkEMailSender.send(MM::MyMail, recipients, secrets; kwargs...) = send(MM, recipients, secrets, DefaultConfiguration(); kwargs...)
 """
-OkEMailSender.send(MM::MyMail, recipients::Vector{<:AbstractString}, secrets; kwargs...) = send(MM, recipients, secrets, DefaultConfiguration(); kwargs...)
+OkEMailSender.send(MM::MyMail, recipients, secrets; kwargs...) = send(MM, recipients, secrets, DefaultConfiguration(); kwargs...)
 
+"""
+`address_cleaner(str::AbstractString)` attemps to `split` the string `str` by `";"` return a vector of email addresses, with white space striped.
 
+# Example
+
+```jldoctest
+addresses = OkEMailSender.address_cleaner("hello.world@mail.com; foo.bar@gmail.boo.com.tw")
+
+addresses == ["hello.world@mail.com", "foo.bar@gmail.boo.com.tw"]
+
+# output
+
+true
+```
+"""
 function address_cleaner(str::AbstractString)
     addresses = split(str, ";") .|> strip
     filter!(!isempty, addresses)
     return addresses
 end
 
+"""
+`address_cleaner(str::Vector{<:AbstractString})` return a vector of email addresses, with white space striped.
+"""
 function address_cleaner(strvec::Vector{<:AbstractString})
     addresses = strvec .|> strip
     return addresses
