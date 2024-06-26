@@ -1,15 +1,27 @@
 name = "OkEMailSender"
 uuid = "add5ede0-49b9-4840-ac63-6ca6386cff5c"
 authors = ["okatsn <okatsn@gmail.com> and contributors"]
-version = "0.0.1"
+version = "0.2.1"
+
+[deps]
+CommonMark = "a80b9123-70ca-4bc0-993e-6e3bcb318db6"
+HypertextLiteral = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
+OkFiles = "b25a35d4-863d-483c-9fa1-95480bd075d2"
+SMTPClient = "c35d69d1-b747-5018-a192-25bc5e63c83d"
 
 [compat]
+CommonMark = "0.8.12"
+HypertextLiteral = "0.9.5"
+OkFiles = "0.5.0"
+SMTPClient = "0.6.4"
 julia = "1.9"
 
 [extras]
 CompatHelperLocal = "5224ae11-6099-4aaa-941d-3aab004bd678"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+OkHypertextTools = "ae1ef8a7-b62b-4b98-a332-ad23a8f1746c"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test", "Documenter", "CompatHelperLocal"]
+test = ["Test", "Documenter", "CompatHelperLocal", "DataFrames", "OkHypertextTools"]
