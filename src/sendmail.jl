@@ -196,6 +196,33 @@ struct HTMLMail <: MyMail
     end
 end
 
+"""
+`MarkdownMail(subject, message)`
+
+# Example
+
+```jldoctest
+using SMTPClient, OkEMailSender, Markdown
+subject = "Julia logo"
+message = md"Check out this cool logo!"
+attachments = ["julia_logo_color.png"]
+
+MarkdownMail(subject, message).message == SMTPClient.get_mime_msg(message)
+
+# output
+true
+```
+"""
+struct MarkdownMail <: MyMail
+    subject
+    message
+    function MarkdownMail(subject, message)
+        message = my_get_mine_msg(message)
+        new(subject, message)
+    end
+end
+
+my_get_mine_msg(md::Markdown.MD) = get_mime_msg(md)
 my_get_mine_msg(str::String) = get_mime_msg(HTML(str))
 my_get_mine_msg(str::HTML) = get_mime_msg(str)
 
