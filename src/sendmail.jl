@@ -222,6 +222,8 @@ struct MarkdownMail <: MyMail
     end
 end
 
+MarkdownMail(subject, message::AbstractString) = MarkdownMail(subject, Markdown.parse(message))
+
 my_get_mine_msg(md::Markdown.MD) = get_mime_msg(md)
 my_get_mine_msg(str::String) = get_mime_msg(HTML(str))
 my_get_mine_msg(str::HTML) = get_mime_msg(str)
