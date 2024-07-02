@@ -290,24 +290,26 @@ function OkEMailSender.send(MM::MyMail, recipients, secrets, config::Configurati
 
     recipients = address_cleaner(recipients)
     ccs = get(kwargs, :cc, String[]) |> address_cleaner
-    replyto0 = get(kwargs, :replyto, "") |> address_cleaner |> only
+    replyto0 = get(kwargs, :replyto, "") |> address_cleaner
     noreplyto = isempty(replyto0)
 
+    if !noreplyto # non-empty address to reply
+        replyto = replyto0 |> only
+    else
+        replyto = ""
+    end
 
     if test
         recipients = recipients .* ".test"
         ccs = ccs .* ".test"
-
-        if !noreplyto
-            replyto0 * ".test"
-        end
+        replyto = replyto * ".test"
     end
 
 
     rcpt = to = ["<$(recipient)>" for recipient in recipients]
 
     cc = ["<$(c)>" for c in ccs]
-    replyto = ifelse(noreplyto, "", "<$(replyto0)>")
+    replyto = ifelse(noreplyto, "", "<$(replyto)>") # add bracket only if address is non-empty.
 
 
 
