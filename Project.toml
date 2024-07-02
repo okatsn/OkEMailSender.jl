@@ -1,11 +1,12 @@
 name = "OkEMailSender"
 uuid = "add5ede0-49b9-4840-ac63-6ca6386cff5c"
 authors = ["okatsn <okatsn@gmail.com> and contributors"]
-version = "0.2.1"
+version = "0.3.0"
 
 [deps]
 CommonMark = "a80b9123-70ca-4bc0-993e-6e3bcb318db6"
 HypertextLiteral = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
+Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
 OkFiles = "b25a35d4-863d-483c-9fa1-95480bd075d2"
 SMTPClient = "c35d69d1-b747-5018-a192-25bc5e63c83d"
 
@@ -24,4 +25,10 @@ OkHypertextTools = "ae1ef8a7-b62b-4b98-a332-ad23a8f1746c"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test", "Documenter", "CompatHelperLocal", "DataFrames", "OkHypertextTools"]
+test = [
+    "Test",
+    "Documenter",
+    "CompatHelperLocal",
+    "DataFrames",
+    "OkHypertextTools",
+]

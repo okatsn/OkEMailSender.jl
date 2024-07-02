@@ -196,6 +196,35 @@ struct HTMLMail <: MyMail
     end
 end
 
+"""
+`MarkdownMail(subject, message)`
+
+# Example
+
+```jldoctest
+using SMTPClient, OkEMailSender, Markdown
+subject = "Julia logo"
+message = md"Check out this cool logo!"
+attachments = ["julia_logo_color.png"]
+
+MarkdownMail(subject, message).message == SMTPClient.get_mime_msg(message)
+
+# output
+true
+```
+"""
+struct MarkdownMail <: MyMail
+    subject
+    message
+    function MarkdownMail(subject, message)
+        message = my_get_mine_msg(message)
+        new(subject, message)
+    end
+end
+
+MarkdownMail(subject, message::AbstractString) = MarkdownMail(subject, Markdown.parse(message))
+
+my_get_mine_msg(md::Markdown.MD) = get_mime_msg(md)
 my_get_mine_msg(str::String) = get_mime_msg(HTML(str))
 my_get_mine_msg(str::HTML) = get_mime_msg(str)
 
@@ -263,24 +292,26 @@ function OkEMailSender.send(MM::MyMail, recipients, secrets, config::Configurati
 
     recipients = address_cleaner(recipients)
     ccs = get(kwargs, :cc, String[]) |> address_cleaner
-    replyto0 = get(kwargs, :replyto, "") |> address_cleaner |> only
+    replyto0 = get(kwargs, :replyto, "") |> address_cleaner
     noreplyto = isempty(replyto0)
 
+    if !noreplyto # non-empty address to reply
+        replyto = replyto0 |> only
+    else
+        replyto = ""
+    end
 
     if test
         recipients = recipients .* ".test"
         ccs = ccs .* ".test"
-
-        if !noreplyto
-            replyto0 * ".test"
-        end
+        replyto = replyto * ".test"
     end
 
 
     rcpt = to = ["<$(recipient)>" for recipient in recipients]
 
     cc = ["<$(c)>" for c in ccs]
-    replyto = ifelse(noreplyto, "", "<$(replyto0)>")
+    replyto = ifelse(noreplyto, "", "<$(replyto)>") # add bracket only if address is non-empty.
 
 
 
