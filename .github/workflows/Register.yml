@@ -80,7 +80,7 @@ jobs:
         env:
           CHANGELOG_MESSAGE: ${{ steps.regist.outputs.content }}
           JULIA_VERSION: ${{ steps.regist.outputs.version }}
-        uses: peter-evans/repository-dispatch@v3 # See https://github.com/peter-evans/repository-dispatch
+        uses: peter-evans/repository-dispatch@v4 # See https://github.com/peter-evans/repository-dispatch
         with:
           repository: ${{ github.repository }}
           event-type: trigger-tagbot
