@@ -40,7 +40,7 @@ jobs:
           git config --global user.name "github-actions"
         # This step is required since in a process that creates a git repo is going to be tested; thus, Git should be configured
         # --local can only be used inside a git repo.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: julia-actions/setup-julia@v2
         with:
           version: ${{ matrix.version }}
@@ -63,7 +63,7 @@ jobs:
       contents: write
       statuses: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: julia-actions/setup-julia@v2
         with:
           version: '1'
